@@ -25,15 +25,17 @@ class Football(object):
     __metaclass__ = abc.ABCMeta
     team = None
     score = None
+    config = None
     triggerURL = "https://maker.ifttt.com/trigger/%s/with/key/%s"
 
-    def __init__(self, team):
+    def __init__(self, team, config):
         self.team = team
+        self.config = config
 
     def trigger(self):
         logging.info("Football - %s - Triggered" % self.team)
         if self.team is not None:
-            requests.get(self.triggerURL % (self.team, os.environ['IFTTT_KEY']))
+            requests.get(self.triggerURL % (self.team, self.config.get("ifttt", "key")))
             return True
         return False
 

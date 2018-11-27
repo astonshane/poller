@@ -1,6 +1,7 @@
 import threading
 import logging
 import signal
+import ConfigParser
 
 from football import Football
 
@@ -13,7 +14,13 @@ def quit(signo, _frame):
     e.set()
 
 def main():
-    plugins = [Football("steelers"), Football("seahawks")]
+    config = ConfigParser.ConfigParser()
+    config.readfp(open('poller.cfg'))
+
+    plugins = []
+    for team in config.get("football", "teams").split(','):
+        plugins.append(Football(team, config))
+    
     while not e.isSet():
         for plugin in plugins:
             if plugin.check():
